@@ -1,10 +1,7 @@
--- Create database
 CREATE DATABASE attendance_db;
 
--- Use the database
 USE attendance_db;
 
--- Create employees table
 CREATE TABLE employees (
     id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id VARCHAR(50) UNIQUE NOT NULL,
@@ -15,7 +12,6 @@ CREATE TABLE employees (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create attendance table
 CREATE TABLE attendance (
     id INT PRIMARY KEY AUTO_INCREMENT,
     employee_id INT NOT NULL,
@@ -32,10 +28,8 @@ CREATE TABLE attendance (
     UNIQUE KEY unique_attendance (employee_id, date)
 );
 
--- Add indexes for performance
 CREATE INDEX idx_employee_id ON attendance(employee_id);
 CREATE INDEX idx_date ON attendance(date);
 CREATE INDEX idx_status ON attendance(status);
 
--- Verify tables created
 SHOW TABLES;

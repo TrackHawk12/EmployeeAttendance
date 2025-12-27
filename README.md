@@ -9,8 +9,8 @@ A full-stack web application that analyzes employee attendance, leave usage, and
 - **Interactive Dashboard**: View monthly statistics and daily breakdowns
 - **Multi-Employee Support**: Track multiple employees with individual dashboards
 - **Business Rules Compliance**: 
-  - Monday-Friday: 8.5 hours (10:00 AM - 6:30 PM)
-  - Saturday: 4 hours (10:00 AM - 2:00 PM)
+  - Monday-Friday: 8.5 hours (10:00 - 18:30)
+  - Saturday: 4 hours (10:00 - 14:00)
   - Sunday: Off
   - 2 leaves allowed per month
 
@@ -19,7 +19,7 @@ A full-stack web application that analyzes employee attendance, leave usage, and
 - **Backend**: Node.js, Express.js
 - **Database**: MySQL
 - **Frontend**: HTML5, CSS3, JavaScript
-- **Excel Parsing**: SheetJS (xlsx), ExcelJS
+- **Excel Parsing**: ~~SheetJS (xlsx)~~, ExcelJS
 
 ## Installation
 
@@ -36,12 +36,10 @@ npm install
 
 3. **Set up MySQL database:**
 
-
+```sql
 sql.txt has been provided, go to SQLWorkbench, connect to database
 Go to file, Open SQL Script and select "sql.txt", run the code
 
-sql.txt
-```sql
 CREATE DATABASE attendance_db;
 USE attendance_db;
 
@@ -107,7 +105,7 @@ http://localhost:3000
 
 **Supported Formats:**
 - Date: `YYYY-MM-DD` or `DD/MM/YYYY`
-- Time: `HH:MM AM/PM` or `HH:MM` (24-hour format)
+- Time: `HH:MM` (24-hour format)
 
 ## Metrics Calculated
 

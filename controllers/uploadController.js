@@ -1,4 +1,4 @@
-const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
 const db = require('../config/database');
 const {
     parseExcelDate,
@@ -15,11 +15,33 @@ exports.uploadAttendance = async (req, res) => {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        // Parse Excel file
-        const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const data = XLSX.utils.sheet_to_json(worksheet);
+        // Parse Excel file with ExcelJS
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(req.file.buffer);
+        const worksheet = workbook.worksheets[0];
+        
+        const data = [];
+        const headers = [];
+        
+        // Get headers from first row
+        worksheet.getRow(1).eachCell((cell, colNumber) => {
+            headers[colNumber] = cell.value;
+        });
+        
+        // Get data rows
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return; // Skip header
+            
+            const rowData = {};
+            row.eachCell((cell, colNumber) => {
+                const header = headers[colNumber];
+                rowData[header] = cell.value;
+            });
+            
+            if (Object.keys(rowData).length > 0) {
+                data.push(rowData);
+            }
+        });
 
         if (data.length === 0) {
             return res.status(400).json({ error: 'Excel file is empty' });
@@ -43,8 +65,14 @@ exports.uploadAttendance = async (req, res) => {
             const empName = String(employeeName).trim();
             employees.add(JSON.stringify({ id: empId, name: empName }));
 
-            // Parse date
-            const date = parseExcelDate(dateStr);
+            // Parse date (ExcelJS handles dates better)
+            let date;
+            if (dateStr instanceof Date) {
+                date = dateStr;
+            } else {
+                date = parseExcelDate(dateStr);
+            }
+            
             const dayOfWeek = date.getDay();
             const expectedHours = getExpectedHours(date);
 

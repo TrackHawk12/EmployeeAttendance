@@ -35,10 +35,12 @@ npm install
 ```
 
 3. **Set up MySQL database:**
-```bash
-mysql -u root -p
-```
 
+
+sql.txt has been provided, go to SQLWorkbench, connect to database
+Go to file, Open SQL Script and select "sql.txt", run the code
+
+sql.txt
 ```sql
 CREATE DATABASE attendance_db;
 USE attendance_db;
@@ -72,6 +74,9 @@ CREATE TABLE attendance (
 CREATE INDEX idx_employee_id ON attendance(employee_id);
 CREATE INDEX idx_date ON attendance(date);
 CREATE INDEX idx_status ON attendance(status);
+
+SHOW TABLES;
+
 ```
 
 4. **Configure environment variables:**
@@ -83,6 +88,7 @@ DB_USER=root
 DB_PASSWORD=your_mysql_password
 DB_NAME=attendance_db
 DB_PORT=3306
+
 PORT=3000
 NODE_ENV=development
 ```
@@ -99,16 +105,6 @@ http://localhost:3000
 
 ## Excel File Format
 
-Your Excel file should have the following columns:
-
-| Employee ID | Employee Name | Date       | In Time  | Out Time |
-|-------------|---------------|------------|----------|----------|
-| EMP001      | John Doe      | 2024-01-15 | 10:00 AM | 6:30 PM  |
-| EMP001      | John Doe      | 2024-01-16 | 10:15 AM | 6:45 PM  |
-| EMP001      | John Doe      | 2024-01-17 |          |          |
-
-**Note:** Missing In Time/Out Time indicates a leave day.
-
 **Supported Formats:**
 - Date: `YYYY-MM-DD` or `DD/MM/YYYY`
 - Time: `HH:MM AM/PM` or `HH:MM` (24-hour format)
@@ -123,7 +119,5 @@ Your Excel file should have the following columns:
 ## Expected Output
 
 After uploading an Excel file:
-
-1. **Upload Success Message**: "File uploaded successfully!"
+1. **Upload Success Message**: By localhost:3000 :"File uploaded successfully!"
 2. **Employee Dropdown**: Lists all employees from the uploaded file
-3. **Monthly Selection**: Choose any month to view data

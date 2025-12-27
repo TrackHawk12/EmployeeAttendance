@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(#667eea, #764ba2);
             min-height: 100vh;
             padding: 20px;
         }
@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         header {
             background: white;
             border-radius: 15px;
@@ -39,7 +38,7 @@
         }
 
         .header-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(#667eea, #764ba2);
             width: 60px;
             height: 60px;
             border-radius: 12px;
@@ -60,7 +59,6 @@
             font-size: 14px;
         }
 
-        /* Upload Section */
         .upload-section {
             background: white;
             border-radius: 15px;
@@ -103,7 +101,7 @@
         }
 
         .upload-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(#667eea, #764ba2);
             color: white;
             padding: 15px 40px;
             border: none;
@@ -128,7 +126,7 @@
         .process-btn {
             width: 100%;
             margin-top: 20px;
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            background: linear-gradient(#48bb78, #38a169);
             color: white;
             padding: 15px;
             border: none;
@@ -169,7 +167,6 @@
             line-height: 1.8;
         }
 
-        /* Filters */
         .filters-section {
             background: white;
             border-radius: 15px;
@@ -213,7 +210,7 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        /* Summary Cards */
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -294,7 +291,6 @@
             transition: width 1s ease;
         }
 
-        /* Table Section */
         .table-section {
             background: white;
             border-radius: 15px;
@@ -372,7 +368,6 @@
             background: #f7fafc;
         }
 
-        /* Loading State */
         .loading {
             text-align: center;
             padding: 40px;
@@ -395,7 +390,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .header-text h1 {
                 font-size: 24px;
@@ -447,15 +441,6 @@
 
             <button class="process-btn" id="processBtn" onclick="uploadFile()" disabled>Upload & Process Data</button>
 
-            <div class="info-box">
-                <h4>Excel File Format Requirements:</h4>
-                <ul>
-                    <li>Columns: Employee ID/Name, Date, In-Time, Out-Time</li>
-                    <li>Date format: YYYY-MM-DD or DD/MM/YYYY</li>
-                    <li>Time format: HH:MM AM/PM or HH:MM (24-hour)</li>
-                    <li>Example: EMP001, 2024-01-15, 10:00 AM, 6:30 PM</li>
-                </ul>
-            </div>
         </div>
 
         <div class="filters-section" id="filtersSection">
@@ -679,42 +664,42 @@
             });
         }
 
-        function enableDemoMode() {
-            const demoData = {
-                employees: [
-                    { id: 'EMP001', name: 'John Doe' },
-                    { id: 'EMP002', name: 'Jane Smith' }
-                ],
-                summary: {
-                    totalExpectedHours: 187,
-                    totalActualHours: 165.5,
-                    leavesUsed: 1,
-                    leavesAllowed: 2,
-                    productivityPercentage: 88.5,
-                    workingDays: 22,
-                    presentDays: 21,
-                    absentDays: 1
-                },
-                dailyBreakdown: [
-                    { date: '2024-01-01', day: 'Monday', inTime: '10:05 AM', outTime: '6:35 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
-                    { date: '2024-01-02', day: 'Tuesday', inTime: '10:15 AM', outTime: '6:25 PM', workedHours: 8.17, status: 'Present', expectedHours: 8.5 },
-                    { date: '2024-01-03', day: 'Wednesday', inTime: '-', outTime: '-', workedHours: 0, status: 'Leave', expectedHours: 8.5 },
-                    { date: '2024-01-04', day: 'Thursday', inTime: '10:00 AM', outTime: '6:30 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
-                    { date: '2024-01-05', day: 'Friday', inTime: '10:10 AM', outTime: '6:40 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
-                    { date: '2024-01-06', day: 'Saturday', inTime: '10:00 AM', outTime: '2:00 PM', workedHours: 4, status: 'Present', expectedHours: 4 },
-                    { date: '2024-01-07', day: 'Sunday', inTime: '-', outTime: '-', workedHours: 0, status: 'Off', expectedHours: 0 }
-                ]
-            };
+        // function enableDemoMode() {
+        //     const demoData = {
+        //         employees: [
+        //             { id: 'EMP001', name: 'John Doe' },
+        //             { id: 'EMP002', name: 'Jane Smith' }
+        //         ],
+        //         summary: {
+        //             totalExpectedHours: 187,
+        //             totalActualHours: 165.5,
+        //             leavesUsed: 1,
+        //             leavesAllowed: 2,
+        //             productivityPercentage: 88.5,
+        //             workingDays: 22,
+        //             presentDays: 21,
+        //             absentDays: 1
+        //         },
+        //         dailyBreakdown: [
+        //             { date: '2024-01-01', day: 'Monday', inTime: '10:05 AM', outTime: '6:35 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-02', day: 'Tuesday', inTime: '10:15 AM', outTime: '6:25 PM', workedHours: 8.17, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-03', day: 'Wednesday', inTime: '-', outTime: '-', workedHours: 0, status: 'Leave', expectedHours: 8.5 },
+        //             { date: '2024-01-04', day: 'Thursday', inTime: '10:00 AM', outTime: '6:30 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-05', day: 'Friday', inTime: '10:10 AM', outTime: '6:40 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-06', day: 'Saturday', inTime: '10:00 AM', outTime: '2:00 PM', workedHours: 4, status: 'Present', expectedHours: 4 },
+        //             { date: '2024-01-07', day: 'Sunday', inTime: '-', outTime: '-', workedHours: 0, status: 'Off', expectedHours: 0 }
+        //         ]
+        //     };
 
-            employeesData = demoData.employees;
-            populateEmployeeDropdown();
-            document.getElementById('filtersSection').classList.add('active');
-            document.getElementById('employeeSelect').value = demoData.employees[0].id;
-            updateSummaryCards(demoData.summary);
-            updateAttendanceTable(demoData.dailyBreakdown);
-            document.getElementById('summaryCards').classList.add('active');
-            document.getElementById('tableSection').classList.add('active');
-        }
+        //     employeesData = demoData.employees;
+        //     populateEmployeeDropdown();
+        //     document.getElementById('filtersSection').classList.add('active');
+        //     document.getElementById('employeeSelect').value = demoData.employees[0].id;
+        //     updateSummaryCards(demoData.summary);
+        //     updateAttendanceTable(demoData.dailyBreakdown);
+        //     document.getElementById('summaryCards').classList.add('active');
+        //     document.getElementById('tableSection').classList.add('active');
+        // }
 
         //enableDemoMode();
     </script>

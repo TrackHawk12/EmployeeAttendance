@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(#667eea, #764ba2);
             min-height: 100vh;
             padding: 20px;
         }
@@ -23,7 +23,6 @@
             margin: 0 auto;
         }
 
-        /* Header */
         header {
             background: white;
             border-radius: 15px;
@@ -39,7 +38,7 @@
         }
 
         .header-icon {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(#667eea, #764ba2);
             width: 60px;
             height: 60px;
             border-radius: 12px;
@@ -60,7 +59,6 @@
             font-size: 14px;
         }
 
-        /* Upload Section */
         .upload-section {
             background: white;
             border-radius: 15px;
@@ -103,7 +101,7 @@
         }
 
         .upload-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(#667eea, #764ba2);
             color: white;
             padding: 15px 40px;
             border: none;
@@ -128,7 +126,7 @@
         .process-btn {
             width: 100%;
             margin-top: 20px;
-            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            background: linear-gradient(#48bb78, #38a169);
             color: white;
             padding: 15px;
             border: none;
@@ -169,7 +167,6 @@
             line-height: 1.8;
         }
 
-        /* Filters */
         .filters-section {
             background: white;
             border-radius: 15px;
@@ -213,7 +210,7 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        /* Summary Cards */
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -294,7 +291,6 @@
             transition: width 1s ease;
         }
 
-        /* Table Section */
         .table-section {
             background: white;
             border-radius: 15px;
@@ -372,7 +368,6 @@
             background: #f7fafc;
         }
 
-        /* Loading State */
         .loading {
             text-align: center;
             padding: 40px;
@@ -395,7 +390,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             .header-text h1 {
                 font-size: 24px;
@@ -425,7 +419,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <header>
             <div class="header-content">
                 <div class="header-icon">👥</div>
@@ -436,12 +429,11 @@
             </div>
         </header>
 
-        <!-- Upload Section -->
         <div class="upload-section">
-            <h2 class="section-title">📤 Upload Attendance Data</h2>
+            <h2 class="section-title"> Upload Attendance Data</h2>
             
             <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">📊</div>
+                <div class="upload-icon"></div>
                 <input type="file" id="fileInput" class="file-input" accept=".xlsx" onchange="handleFileSelect(event)">
                 <button class="upload-btn">Select Excel File (.xlsx)</button>
                 <p class="selected-file" id="selectedFile"></p>
@@ -449,10 +441,8 @@
 
             <button class="process-btn" id="processBtn" onclick="uploadFile()" disabled>Upload & Process Data</button>
 
-        
         </div>
 
-        <!-- Filters -->
         <div class="filters-section" id="filtersSection">
             <div class="filters-grid">
                 <div class="filter-group">
@@ -468,11 +458,10 @@
             </div>
         </div>
 
-        <!-- Summary Cards -->
         <div class="summary-cards" id="summaryCards">
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon blue">🕐</div>
+                    <div class="card-icon blue"></div>
                     <span class="card-label">Expected Hours</span>
                 </div>
                 <div class="card-value" id="expectedHours">0h</div>
@@ -481,7 +470,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon green">✓</div>
+                    <div class="card-icon green"></div>
                     <span class="card-label">Actual Hours</span>
                 </div>
                 <div class="card-value" id="actualHours">0h</div>
@@ -490,7 +479,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon orange">📅</div>
+                    <div class="card-icon orange"></div>
                     <span class="card-label">Leaves Used</span>
                 </div>
                 <div class="card-value" id="leavesUsed">0/2</div>
@@ -499,7 +488,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-icon purple">📈</div>
+                    <div class="card-icon purple"></div>
                     <span class="card-label">Productivity</span>
                 </div>
                 <div class="card-value" id="productivity">0%</div>
@@ -509,9 +498,8 @@
             </div>
         </div>
 
-        <!-- Table Section -->
         <div class="table-section" id="tableSection">
-            <h2 class="section-title">📋 Daily Attendance Breakdown</h2>
+            <h2 class="section-title">Daily Attendance Breakdown</h2>
             <div class="table-container">
                 <table>
                     <thead>
@@ -536,3 +524,184 @@
             </div>
         </div>
     </div>
+    <script>
+        let selectedFile = null;
+        let employeesData = [];
+
+
+        const today = new Date();
+        const currentMonth = today.toISOString().slice(0, 7);
+        document.getElementById('monthSelect').value = currentMonth;
+
+        function handleFileSelect(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                document.getElementById('selectedFile').textContent = `Selected: ${selectedFile.name}`;
+                document.getElementById('processBtn').disabled = false;
+            }
+        }
+
+        async function uploadFile() {
+            if (!selectedFile) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const processBtn = document.getElementById('processBtn');
+            processBtn.textContent = 'Uploading...';
+            processBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+
+            try {
+                const response = await fetch('/api/upload-attendance', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    employeesData = data.employees;
+                    populateEmployeeDropdown();
+                    document.getElementById('filtersSection').classList.add('active');
+                    alert('File uploaded successfully!');
+                    
+                    if (employeesData.length > 0) {
+                        document.getElementById('employeeSelect').value = employeesData[0].id;
+                        loadDashboard();
+                    }
+                } else {
+                    alert('Failed to upload file: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Failed to upload file. Please check your network connection.');
+            } finally {
+                processBtn.textContent = 'Upload & Process Data';
+                processBtn.disabled = false;
+            }
+        }
+
+        function populateEmployeeDropdown() {
+            const select = document.getElementById('employeeSelect');
+            select.innerHTML = '<option value="">Choose an employee...</option>';
+            
+            employeesData.forEach(emp => {
+                const option = document.createElement('option');
+                option.value = emp.id;
+                option.textContent = `${emp.name} (${emp.id})`;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadDashboard() {
+            const employeeId = document.getElementById('employeeSelect').value;
+            const month = document.getElementById('monthSelect').value;
+
+            if (!employeeId || !month) return;
+
+            try {
+                const response = await fetch(`/api/dashboard?employeeId=${employeeId}&month=${month}`);
+                const data = await response.json();
+
+                if (data.summary) {
+                    updateSummaryCards(data.summary);
+                    updateAttendanceTable(data.dailyBreakdown);
+                    
+                    document.getElementById('summaryCards').classList.add('active');
+                    document.getElementById('tableSection').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                alert('Failed to load dashboard data');
+            }
+        }
+
+        function updateSummaryCards(summary) {
+            document.getElementById('expectedHours').textContent = `${summary.totalExpectedHours}h`;
+            document.getElementById('workingDays').textContent = `${summary.workingDays} working days`;
+            
+            document.getElementById('actualHours').textContent = `${summary.totalActualHours}h`;
+            document.getElementById('presentDays').textContent = `${summary.presentDays} days present`;
+            
+            document.getElementById('leavesUsed').textContent = `${summary.leavesUsed}/${summary.leavesAllowed}`;
+            document.getElementById('leavesRemaining').textContent = `${summary.leavesAllowed - summary.leavesUsed} remaining`;
+            
+            document.getElementById('productivity').textContent = `${summary.productivityPercentage}%`;
+            document.getElementById('productivityBar').style.width = `${summary.productivityPercentage}%`;
+        }
+
+        function updateAttendanceTable(breakdown) {
+            const tbody = document.getElementById('attendanceTable');
+            tbody.innerHTML = '';
+
+            breakdown.forEach(record => {
+                const row = document.createElement('tr');
+                
+                if (record.status === 'Leave') {
+                    row.classList.add('leave-row');
+                } else if (record.status === 'Off') {
+                    row.classList.add('off-row');
+                }
+
+                let statusClass = 'status-present';
+                if (record.status === 'Leave') statusClass = 'status-leave';
+                if (record.status === 'Off') statusClass = 'status-off';
+
+                row.innerHTML = `
+                    <td><strong>${record.date}</strong></td>
+                    <td>${record.day}</td>
+                    <td>${record.inTime}</td>
+                    <td>${record.outTime}</td>
+                    <td><strong>${record.workedHours}h</strong></td>
+                    <td>${record.expectedHours}h</td>
+                    <td><span class="status-badge ${statusClass}">${record.status}</span></td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        // function enableDemoMode() {
+        //     const demoData = {
+        //         employees: [
+        //             { id: 'EMP001', name: 'John Doe' },
+        //             { id: 'EMP002', name: 'Jane Smith' }
+        //         ],
+        //         summary: {
+        //             totalExpectedHours: 187,
+        //             totalActualHours: 165.5,
+        //             leavesUsed: 1,
+        //             leavesAllowed: 2,
+        //             productivityPercentage: 88.5,
+        //             workingDays: 22,
+        //             presentDays: 21,
+        //             absentDays: 1
+        //         },
+        //         dailyBreakdown: [
+        //             { date: '2024-01-01', day: 'Monday', inTime: '10:05 AM', outTime: '6:35 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-02', day: 'Tuesday', inTime: '10:15 AM', outTime: '6:25 PM', workedHours: 8.17, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-03', day: 'Wednesday', inTime: '-', outTime: '-', workedHours: 0, status: 'Leave', expectedHours: 8.5 },
+        //             { date: '2024-01-04', day: 'Thursday', inTime: '10:00 AM', outTime: '6:30 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-05', day: 'Friday', inTime: '10:10 AM', outTime: '6:40 PM', workedHours: 8.5, status: 'Present', expectedHours: 8.5 },
+        //             { date: '2024-01-06', day: 'Saturday', inTime: '10:00 AM', outTime: '2:00 PM', workedHours: 4, status: 'Present', expectedHours: 4 },
+        //             { date: '2024-01-07', day: 'Sunday', inTime: '-', outTime: '-', workedHours: 0, status: 'Off', expectedHours: 0 }
+        //         ]
+        //     };
+
+        //     employeesData = demoData.employees;
+        //     populateEmployeeDropdown();
+        //     document.getElementById('filtersSection').classList.add('active');
+        //     document.getElementById('employeeSelect').value = demoData.employees[0].id;
+        //     updateSummaryCards(demoData.summary);
+        //     updateAttendanceTable(demoData.dailyBreakdown);
+        //     document.getElementById('summaryCards').classList.add('active');
+        //     document.getElementById('tableSection').classList.add('active');
+        // }
+
+        //enableDemoMode();
+    </script>
+</body>
+</html>

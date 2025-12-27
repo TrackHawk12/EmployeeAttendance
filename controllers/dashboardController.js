@@ -9,12 +9,10 @@ exports.getDashboard = async (req, res) => {
             return res.status(400).json({ error: 'Employee ID and month are required' });
         }
 
-        // Parse month (format: YYYY-MM)
         const [year, monthNum] = month.split('-').map(Number);
         const startDate = new Date(year, monthNum - 1, 1);
         const endDate = new Date(year, monthNum, 0);
 
-        // Get employee
         const [empRows] = await db.query(
             'SELECT id, employee_id, name FROM employees WHERE employee_id = ?',
             [employeeId]
@@ -26,7 +24,6 @@ exports.getDashboard = async (req, res) => {
 
         const employee = empRows[0];
 
-        // Get attendance records
         const [attendanceRows] = await db.query(
             `SELECT * FROM attendance 
              WHERE employee_id = ? 
@@ -36,7 +33,6 @@ exports.getDashboard = async (req, res) => {
             [employee.id, formatDate(startDate), formatDate(endDate)]
         );
 
-        // Calculate summary
         let totalExpectedHours = 0;
         let totalActualHours = 0;
         let leavesUsed = 0;
@@ -46,12 +42,10 @@ exports.getDashboard = async (req, res) => {
         const dailyBreakdown = [];
         const attendanceMap = {};
 
-        // Create map for quick lookup
         attendanceRows.forEach(record => {
             attendanceMap[record.date.toISOString().split('T')[0]] = record;
         });
 
-        // Generate daily breakdown for entire month
         const currentDate = new Date(startDate);
         while (currentDate <= endDate) {
             const dateStr = formatDate(currentDate);

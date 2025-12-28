@@ -15,22 +15,19 @@ exports.uploadAttendance = async (req, res) => {
             return res.status(400).json({ error: 'No file uploaded' });
         }
 
-        // Parse Excel file with ExcelJS
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.load(req.file.buffer);
         const worksheet = workbook.worksheets[0];
         
         const data = [];
         const headers = [];
-        
-        // Get headers from first row
+
         worksheet.getRow(1).eachCell((cell, colNumber) => {
             headers[colNumber] = cell.value;
         });
-        
-        // Get data rows
+
         worksheet.eachRow((row, rowNumber) => {
-            if (rowNumber === 1) return; // Skip header
+            if (rowNumber === 1) return;
             
             const rowData = {};
             row.eachCell((cell, colNumber) => {
@@ -50,60 +47,103 @@ exports.uploadAttendance = async (req, res) => {
         const employees = new Set();
         const attendanceRecords = [];
 
-        // Process each row
+
         for (const row of data) {
-            // Extract data (handle various column name formats)
-            const employeeId = row['Employee ID'] || row['EmployeeID'] || row['Employee'];
-            const employeeName = row['Employee Name'] || row['Name'] || employeeId;
-            const dateStr = row['Date'];
-            const inTimeStr = row['In Time'] || row['InTime'] || row['In-Time'];
-            const outTimeStr = row['Out Time'] || row['OutTime'] || row['Out-Time'];
-
-            if (!employeeId || !dateStr) continue;
-
-            const empId = String(employeeId).trim();
-            const empName = String(employeeName).trim();
-            employees.add(JSON.stringify({ id: empId, name: empName }));
-
-            // Parse date (ExcelJS handles dates better)
-            let date;
-            if (dateStr instanceof Date) {
-                date = dateStr;
-            } else {
-                date = parseExcelDate(dateStr);
-            }
             
-            const dayOfWeek = date.getDay();
-            const expectedHours = getExpectedHours(date);
+        const employeeId = row['Employee ID'] || row['EmployeeID'] || row['Employee'];
+        const employeeName = row['Employee Name'] || row['Name'] || employeeId;
+        const dateStr = row['Date'];
+        const inTimeStr = row['In Time'] || row['InTime'] || row['In-Time'];
+        const outTimeStr = row['Out Time'] || row['OutTime'] || row['Out-Time'];
 
-            let status = 'Present';
-            let workedHours = 0;
-            let inTime = null;
-            let outTime = null;
+        if (!employeeId || !dateStr) {
+            console.log(`Skipping invalid row: no employee ID or date`);
+            continue;
+        }
 
-            // Determine status
-            if (dayOfWeek === 0) {
-                status = 'Off';
-            } else if (inTimeStr && outTimeStr) {
-                inTime = parseTime(date, inTimeStr);
-                outTime = parseTime(date, outTimeStr);
-                workedHours = calculateWorkedHours(inTime, outTime);
-                status = 'Present';
-            } else if (expectedHours > 0) {
-                status = 'Leave';
-            }
+        if (String(employeeId).length > 20) {
+            console.log(`Skipping row with invalid employee ID`);
+            continue;
+        }
 
-            attendanceRecords.push({
-                employeeId: empId,
-                employeeName: empName,
-                date: formatDate(date),
-                inTime: inTime ? formatDateTime(inTime) : null,
-                outTime: outTime ? formatDateTime(outTime) : null,
-                workedHours,
-                expectedHours,
-                status,
-                isWeekend: dayOfWeek === 0 || dayOfWeek === 6
-            });
+        const testDate = new Date(dateStr);
+        if (isNaN(testDate.getTime())) {
+            console.log(`Skipping row with invalid date: ${dateStr}`);
+            continue;
+        }
+
+        const empId = String(employeeId).trim();
+        const empName = String(employeeName).trim();
+        employees.add(JSON.stringify({ id: empId, name: empName }));
+
+        let date;
+        if (dateStr instanceof Date) {
+            date = dateStr;
+        } else {
+            date = parseExcelDate(dateStr);
+        }
+
+        const dayOfWeek = date.getDay();
+        const expectedHours = getExpectedHours(date);
+
+        let status = 'Present';
+        let workedHours = 0;
+        let inTime = null;
+        let outTime = null;
+
+        console.log(`Processing: ${empId}, Date: ${formatDate(date)}, Day: ${dayOfWeek}, InTime: "${inTimeStr}", OutTime: "${outTimeStr}"`);
+
+        if (dayOfWeek === 0) {
+
+            status = 'Off';
+            workedHours = 0;
+            inTime = null;
+            outTime = null;
+            console.log(`  -> SUNDAY: Forced to OFF`);
+        } 
+        else if (!inTimeStr || !outTimeStr || 
+                inTimeStr === '' || outTimeStr === '' ||
+                inTimeStr === 'undefined' || outTimeStr === 'undefined' ||
+                String(inTimeStr).trim() === '' || 
+                String(outTimeStr).trim() === '') {
+
+            status = expectedHours > 0 ? 'Leave' : 'Off';
+            workedHours = 0;
+            inTime = null;
+            outTime = null;
+            console.log(`  -> Missing times: ${status}`);
+        } 
+        else {
+
+    inTime = parseTime(date, inTimeStr);
+    outTime = parseTime(date, outTimeStr);
+    
+    console.log(`  -> Parsed times - In: ${inTime}, Out: ${outTime}`);
+    
+    if (inTime && outTime && outTime > inTime) {
+        workedHours = calculateWorkedHours(inTime, outTime);
+        status = 'Present';
+        console.log(`  -> Calculated hours: ${workedHours}`);
+    } else {
+        console.log(`  -> ERROR: Failed to parse or invalid times`);
+        inTime = null;
+        outTime = null;
+        workedHours = 0;
+        status = expectedHours > 0 ? 'Leave' : 'Off';
+    }
+}
+
+attendanceRecords.push({
+    employeeId: empId,
+    employeeName: empName,
+    date: formatDate(date),
+    inTime: inTime ? formatDateTime(inTime) : null,
+    outTime: outTime ? formatDateTime(outTime) : null,
+    workedHours,
+    expectedHours,
+    status,
+    isWeekend: dayOfWeek === 0
+});
         }
 
         // Insert employees

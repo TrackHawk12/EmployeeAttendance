@@ -8,7 +8,6 @@ function parseExcelDate(serial) {
         const date_info = new Date(utc_value * 1000);
         return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate());
     }
-
     return new Date(serial);
 }
 

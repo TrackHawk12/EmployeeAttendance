@@ -1,5 +1,4 @@
 CREATE DATABASE attendance_db;
-
 USE attendance_db;
 
 CREATE TABLE employees (
@@ -31,5 +30,11 @@ CREATE TABLE attendance (
 CREATE INDEX idx_employee_id ON attendance(employee_id);
 CREATE INDEX idx_date ON attendance(date);
 CREATE INDEX idx_status ON attendance(status);
+
+SELECT * FROM attendance;
+SELECT * FROM employees;
+
+DELETE FROM attendance;
+DELETE FROM employees;
 
 SHOW TABLES;

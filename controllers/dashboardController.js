@@ -1,5 +1,4 @@
 const db = require('../config/database');
-const { getDayName } = require('../utils/dateUtils');
 
 exports.getDashboard = async (req, res) => {
     try {
@@ -25,7 +24,17 @@ exports.getDashboard = async (req, res) => {
         const employee = empRows[0];
 
         const [attendanceRows] = await db.query(
-            `SELECT * FROM attendance 
+            `SELECT 
+                id,
+                employee_id,
+                DATE_FORMAT(date, '%Y-%m-%d') as date_string,
+                in_time,
+                out_time,
+                worked_hours,
+                expected_hours,
+                status,
+                is_weekend
+             FROM attendance 
              WHERE employee_id = ? 
              AND date >= ? 
              AND date <= ? 
@@ -43,7 +52,7 @@ exports.getDashboard = async (req, res) => {
         const attendanceMap = {};
 
         attendanceRows.forEach(record => {
-            attendanceMap[record.date.toISOString().split('T')[0]] = record;
+            attendanceMap[record.date_string] = record;
         });
 
         const currentDate = new Date(startDate);
@@ -68,21 +77,28 @@ exports.getDashboard = async (req, res) => {
             let inTime = '-';
             let outTime = '-';
 
-            if (record) {
+            if (dayOfWeek === 0) {
+                status = 'Off';
+                workedHours = 0;
+                inTime = '-';
+                outTime = '-';
+            }
+            else if (record) {
                 status = record.status;
                 workedHours = parseFloat(record.worked_hours);
-                if (record.in_time) {
+
+                if (record.status === 'Present' && record.in_time && record.out_time) {
                     const inDate = new Date(record.in_time);
-                    inTime = formatTime(inDate);
-                }
-                if (record.out_time) {
                     const outDate = new Date(record.out_time);
+                    inTime = formatTime(inDate);
                     outTime = formatTime(outDate);
                 }
 
                 if (status === 'Present') presentDays++;
                 if (status === 'Leave') leavesUsed++;
-            } else if (expectedHours > 0) {
+            } 
+            else if (expectedHours > 0) {
+                // No record for a working day = Leave
                 status = 'Leave';
                 leavesUsed++;
             }
@@ -140,4 +156,9 @@ function formatTime(date) {
     const period = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12 || 12;
     return `${hours}:${minutes} ${period}`;
+}
+
+function getDayName(date) {
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return days[date.getDay()];
 }
